@@ -1,0 +1,48 @@
+<!--
+<!DOCTYPE html>
+<html>
+    <head> 
+        <meta charset="UTF-8">
+        <title>Приложение: сборник рецептов</title>
+        <link rel="stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+    </head>
+    <body>
+        <header id="pageHeader" style="border-radius: 25px;"><h1> My Recipe Book </h1></header>
+        
+        <nav id="mainNav" style="border-radius: 25px;">
+          <p> <h2>Options</h2> </p>
+          <p><a class='one' href="/">Main list</a></p>
+
+        </nav>
+    
+        <footer id="pageFooter" style="border-radius: 25px;">
+          <p> <h2>Bon appetit!</h2> </p>
+        </footer>
+  -->
+  
+  {% extends "base.html" %}
+  {% block content %}
+        <article id="mainArticle" style="border-radius: 25px;">
+            <h2> Edit </h2>
+            <form action="/edit/{{ id }}" method="POST">
+                {{ template_form.hidden_tag() }}
+        
+                <p>{{ template_form.title.label }}
+                {{ template_form.title(size=50) }}</p>
+        
+                <div style="overflow: auto; height:100px">
+                  {% for ele in ingredients %}
+                  <p> {{ele}} </p> <!-- list of the added ingredients -->
+                  {% endfor %}
+                  </div>
+        
+                <p>{{ template_form.instructions.label }}
+                {{ template_form.instructions(style='height: 100px;  width: 400px;') }}</p>
+        
+                <p>{{ template_form.submit() }}</p>
+              </form>
+        </article>  
+  {% endblock %}  
+    <!--
+      </body>
+</html>-->

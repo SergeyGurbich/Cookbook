@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head> 
+    <meta charset="UTF-8">
+    <title>Приложение: сборник рецептов</title>
+    <link rel="stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+  </head> 
+  <body>
+    <header id="pageHeader"><h1> Сборник рецептов </h1></header>
+    
+    <nav id="mainNav">
+      <p> <h2>Options</h2> </p>
+      <p><a class='one' href="/add">Add a recipe</a></p>
+      <!--Поиск по ключевому слову-->
+      
+      <form action="/search">
+        <label for="search">Поиск по ключевому слову</label>
+        <input type="text" id="search">
+        <button>Искать</button>
+      </form>
+      
+    </nav>
+
+    <footer id="pageFooter">
+      <p> <h3>Bon appetit!</h3> </p>
+    </footer>
+
+    <article id="mainArticle">
+      <h2> Имеющиеся на данный момент рецепты: </h2>
+      {% for ele in rows %}
+      <p><a href="/recipe/{{ ele.id }}">{{ ele.title }}</a></p>
+      {% endfor %}
+    </article>  
+   </body>
+</html>

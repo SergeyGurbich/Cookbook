@@ -1,0 +1,60 @@
+<!--
+<!DOCTYPE html>
+<html>
+    <head> 
+        <meta charset="UTF-8">
+        <title>Приложение: сборник рецептов</title>
+        <link rel="stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+    </head>
+  <body>
+    <header id="pageHeader" style="border-radius: 25px;"><h1> My Recipe Book </h1></header>
+    
+    <nav id="mainNav" style="border-radius: 25px;">
+      <p> <h2>Options</h2> </p>
+      <p><a class='one' href="/">Main list</a></p>
+
+    </nav>
+
+    <footer id="pageFooter" style="border-radius: 25px;">
+      <p> <h2>Bon appetit!</h2> </p>
+    </footer>
+-->
+
+  {% extends "base.html" %}
+  {% block content %}
+    <article id="mainArticle" style="border-radius: 25px;">
+        <h2> Create a daily menu </h2>
+        <form action="/daily_menu" method="POST">
+
+          <!-- template_form - Form for adding a recipe into the daily menu -->
+          <!-- 3 кнопки: добавить рецепт, добавить продукт, очистить поле -->
+    
+            <p>Add a meal to your daily menu from the list of recipes</p>  
+            <p>{{ meal.recipe.label }} <!-- meal is a form  -->
+            {{ meal.recipe() }}
+            {{meal.add_rec() }}</p>
+
+            <p>Add a snack to your daily menu from the list of products</p>
+            <p>{{ meal.ingredient.label }} <!-- name of the ingredient -->
+                {{ meal.ingredient() }}</p>
+            <p>{{ meal.weight.label }}
+                {{ meal.weight() }}
+                {{ meal.add_prod() }}</p> <!-- Button Add an ingredient -->
+
+            <div class="bordered"> <!--</div>style="overflow: auto; height:150px; width:500px">-->
+            {% for ele in menu %} <!-- menu is a list from the function -->
+            <h4> {{ele}} </h4> <!-- list of the added ingredients -->
+            {% endfor %}
+
+            <p class="right"> Total calories: {{calories}} Kcal</p>
+            <p class="right"> Total proteins: {{proteins}} gr.</p>
+            </div>
+            <p>{{ meal.clean()}}</p>
+            <!-- I can then add a Submit button for submitting the daily menu into the BD or print it out -->
+            
+          </form>
+    </article>  
+  {% endblock %}
+  <!--
+  </body>
+</html>-->

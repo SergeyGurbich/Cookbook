@@ -1,0 +1,60 @@
+<!--
+<!DOCTYPE html>
+<html>
+    <head> 
+        <meta charset="UTF-8">
+        <title>Приложение: сборник рецептов</title>
+        <link rel="stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+    </head>
+  <body>
+    <header id="pageHeader" style="border-radius: 25px;"><h1> My Recipe Book </h1></header>
+    
+    <nav id="mainNav" style="border-radius: 25px;">
+      <p> <h2>Options</h2> </p>
+      <p><a class='one' href="/">Main list</a></p>
+
+    </nav>
+
+    <footer id="pageFooter" style="border-radius: 25px;">
+      <p> <h2>Bon appetit!</h2> </p>
+    </footer>
+-->
+{% extends "base.html" %}
+{% block content %}    
+    <article id="mainArticle" style="border-radius: 25px;">
+            
+        
+      <div class =" left_bl ">
+        <h2>List of existing products</h2>
+        <div style="overflow: auto; height:150px"> 
+
+          {% for a in rows %}
+            <h4>{{a.product}}</h4>
+          {% endfor %}
+        </div>
+      </div>
+      
+      <div class=" right_bl "> 
+        <h2> Add a products to your database </h2> 
+          <form action="/add_products" method="POST"> 
+            {{ form.hidden_tag() }}
+    
+            <p>{{ form.title.label }}
+            {{ form.title(size=30) }}</p>
+    
+            <p>{{ form.calories.label }}
+            {{ form.calories(size=5) }}</p>
+    
+            <p>{{ form.proteins.label }}
+            {{ form.proteins(size=5) }}</p>
+            {{txt}}
+            <p>{{ form.submit() }}</p>
+          </form>
+
+      </div>
+    </article> 
+    {% endblock %}
+    
+    <!--
+   </body>
+</html>-->

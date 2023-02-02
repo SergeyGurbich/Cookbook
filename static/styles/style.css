@@ -1,0 +1,159 @@
+body {
+    background-color: lightgreen; /*фон поля за сеткой*/
+    background-image: url('watercolor.jpg'); 
+ /*Создаем сетку*/  
+    display: grid;
+  grid-template-areas: 
+    "nav header header"
+    "nav article article"
+    "nav footer footer";
+  grid-template-rows: 80px 1fr 60px;  
+  grid-template-columns: 20% 1fr 1fr;
+  grid-row-gap: 20px;
+  grid-column-gap: 20px;
+  height: 100vh;
+  margin: 5px;
+}
+/*Задаем внутренние свойства каждого элемента сетки*/ 
+header{
+    /*padding: 1.2em;*/
+    background: rgb(243, 236, 195);
+    background-image: url('wallpaper.jpg');
+    border-radius: 20px;
+    }
+
+footer {
+    /*padding: 1.2em;*/
+    background: rgb(243, 236, 195);
+    background-image: url('wallpaper.jpg');
+    }
+
+nav {
+    /*padding: 1.2em;*/
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    padding-left: 20px;
+    background: rgb(244, 218, 242);
+    background-image: url('wallpaper.jpg'); 
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    }
+
+  div {
+    padding: 1.2em;
+    background: rgb(244, 218, 242);
+    background-image: url('wallpaper.jpg'); 
+    width: 100%;
+    }  
+
+  .bordered {
+    overflow: auto; 
+    height:150px; 
+    width: 400px; 
+    border-style: groove; 
+    border-color: blue;
+  }
+    
+  article {
+    padding: 1.2em;
+    background: rgb(244, 218, 242);
+    background-image: url('wallpaper.jpg'); 
+    }
+/*Создаем идентификаторы каждого элемента сетки для ссылки в html*/   
+#pageHeader {
+    grid-area: header;
+    }
+  #pageFooter {
+    grid-area: footer;
+    }
+  #mainArticle { 
+    grid-area: article;      
+    }
+  #mainNav { 
+    grid-area: nav; 
+    }
+
+h1 {
+    text-align: center;
+    font-family: 'Garamound'
+  }
+
+h2 {
+    text-align: center;
+    font-family: 'Garamound';
+  }
+
+h3 {
+    font-family: 'Garamound';
+  }
+
+h4 {font-family: 'Garamound';
+  color: blue;
+  font-size: 14;
+  line-height: 0.3;}
+
+p {font-family: 'Garamound';
+  color: blue;
+  font-size: 14;}
+  .right {font-family: 'Garamound';
+    color: blue;
+    font-size: 14;
+    text-align: right
+  }
+
+/*обычные ссылки*/ 
+  a {
+    display: inline-block;
+    text-decoration: none;
+    height: 18px; 
+    letter-spacing: 1px;
+    margin: 1px 1px;
+    padding: 1px 1px;
+    font-size: 18px;
+    font-style: italic; 
+    font-weight: bold;
+    font-family: 'Book Antiqua';
+ }
+ .login {
+  text-decoration: underline;
+  color: red;
+  font-style: normal;
+  font-weight: bold;
+  font-family: 'Garamound';
+  font-size: 14;
+ }
+ /*ссылки в виде кнопок*/ 
+  .one {
+      border-radius: 10px;
+      color: #5624cc;
+      /*background: #FFF79A;*/
+      background-color: transparent;
+      /*border-bottom: 5px solid #E1B442;*/
+      box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+      padding: 5px;
+      cursor: pointer;
+   }
+  .one:hover {
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+      padding: 5px;
+   }
+
+.right_bl {
+  float: right;
+  display: block;
+  width: 45%;
+  padding: 4px;
+  background-image: none;
+  background-color: rgba(0,0,0,0); /* д.б. сделать фон блока прозрачным, но нет, т.к background-image задан в родительском */
+}  
+
+.left_bl {
+  float: left;
+  display: block;
+  width: 45%;
+  padding: 4px;
+  background-image: none;
+  background-color: rgba(0,0,0,0);
+}  

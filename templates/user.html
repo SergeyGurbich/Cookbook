@@ -1,0 +1,67 @@
+<!--
+<!DOCTYPE html>
+<html>
+    <head> 
+        <meta charset="UTF-8">
+        <title>Приложение: сборник рецептов</title>
+        <link rel="stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+      </head>
+  <body>
+    <header id="pageHeader" style="border-radius: 25px;">
+        <h1> My Recipe Book </h1>
+    </header>
+
+    <nav id="mainNav">
+      <p> <h2>Options</h2> </p>
+       
+      <p><a class='one' href="/add_products">Ingredients</a></p>
+      <p><a class='one' href="/user">Recipes</a></p>
+      <p><a class='one' href="/add">Add a recipe</a></p>
+      <p><a class='one' href="/daily_menu">Meals</a></p>
+      <p><a class='one' href="{{ url_for('logout') }}">Log out</a></p>
+
+    </nav>
+
+    <footer id="pageFooter" style="border-radius: 25px;">
+        <p> <h2>Bon appetit!</h2> </p>
+    </footer>
+-->
+
+{% extends "base.html" %}
+{% block content %}
+
+    <article id="mainArticle" style="border-radius: 25px;">
+
+        <div class="left_bl">
+          <h3> My recipes </h3>
+        </div>
+        
+        <div class="right_bl">
+                <!--Поиск по ключевому слову-->
+          <form action="/search" method="POST">
+          {{ search_form.hidden_tag() }}
+    
+          <p>{{ search_form.word.label }}
+          {{ search_form.word(size=20) }}
+
+          {{ search_form.submit() }}</p>
+          </form>
+          <p><a class='one' href="/add">Add a recipe</a></p>
+        </div>
+
+      <div class='bordered'> 
+        {% for ele in rows %}
+            {% if ele.author == username %}
+            <p><a href="/recipe/{{ ele.id }}">{{ ele.title }}</a></p>
+            {% endif %}
+        {% endfor %}
+      </div>
+    
+
+    </article> 
+    
+    {% endblock %}
+    <!--
+  </body>
+</html>-->

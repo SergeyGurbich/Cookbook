@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head> 
+        <meta charset="UTF-8">
+        <title>My Recipes</title>
+        <link rel="stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    </head>
+  <body>
+    <header id="pageHeader" style="border-radius: 25px;">
+        <h1> My Recipe Book </h1>
+    </header>
+
+    <nav id="mainNav">
+      <p> <h2>Options</h2> </p>
+       
+      <p><a class='one' href="/add_products">Ingredients</a></p>
+      <p><a class='one' href="/">Recipes</a></p>
+      <p><a class='one' href="/add">Add a recipe</a></p>
+      <p><a class='one' href="/daily_menu">Meals</a></p>
+      <p><a class='one' href="{{ url_for('logout') }}">Log out</a></p>
+
+    </nav>
+
+    <footer id="pageFooter" style="border-radius: 25px;">
+        <h2>Bon appetit!</h2>
+    </footer>
+
+    {% block content %}
+    {% endblock %}
+
+    </body>
+</html>

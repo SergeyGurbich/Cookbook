@@ -1,0 +1,62 @@
+<!--
+<!DOCTYPE html>
+<html>
+    <head> 
+        <meta charset="UTF-8">
+        <title>Приложение: сборник рецептов</title>
+        <link rel="stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+    </head>
+  <body>
+    <header id="pageHeader" style="border-radius: 25px;"><h1> My Recipe Book </h1></header>
+    
+    <nav id="mainNav" style="border-radius: 25px;">
+      <p> <h2>Options</h2> </p>
+      <p><a class='one' href="/">Main list</a></p>
+
+    </nav>
+
+    <footer id="pageFooter" style="border-radius: 25px;">
+      <p> <h2>Bon appetit!</h2> </p>
+    </footer>
+  -->
+  {% extends "base.html" %}
+  {% block content %}
+    <article id="mainArticle" style="border-radius: 25px;">
+        <h2> Add a recipe </h2>
+        <form action="/add" method="POST">
+          <div class =" left_bl ">
+            <p>{{ template_form2.title.label }} <!-- title of the the recipe -->
+            {{ template_form2.title() }}</p>
+
+          <!-- template_form - Form for adding an ingredient into the recipe -->
+            {{ template_form.hidden_tag() }}
+    
+            <p>{{ template_form.ingredient.label }} <!-- name of the ingredient -->
+            {{ template_form.ingredient() }}</p>
+
+            <p>{{ template_form.weight.label }}
+            {{ template_form.weight() }}</p>
+            
+            <p>{{ template_form.add() }}</p> <!-- Button Add an ingredient -->
+
+            <div class='bordered'> 
+            {% for ele in lst_ing %}
+            <p> {{ele}} </p> <!-- list of the added ingredients -->
+            {% endfor %}
+            </div>
+          </div> 
+          
+          <div class=" right_bl ">
+            <!-- template_form2 - Form for submitting the recipe into BD -->
+            
+            <p>{{ template_form2.instructions.label }}
+            {{ template_form2.instructions(style='height: 100px;  width: 400px;') }}</p>
+    
+            <p>{{ template_form2.submit() }}</p>
+          </div>
+          </form>
+    </article>  
+    {% endblock %}
+  <!--
+  </body>
+</html>-->
