@@ -76,7 +76,7 @@ nav {
 
 h1 {
     text-align: center;
-    font-family: 'Garamound'
+    font-family: 'Lucida calligraphy', 'Garamound'
   }
 
 h2 {
@@ -91,7 +91,17 @@ h3 {
 h4 {font-family: 'Garamound';
   color: blue;
   font-size: 14;
-  line-height: 0.3;}
+  line-height: 0.2;}
+
+h5 {letter-spacing: 1px;
+  margin: 1px 1px;
+  padding: 1px 1px;
+  font-size: 18px;
+  font-style: italic; 
+  font-weight: bold;
+  font-family: 'Book Antiqua';
+  color: #5624cc;
+}
 
 p {font-family: 'Garamound';
   color: blue;
@@ -99,8 +109,14 @@ p {font-family: 'Garamound';
   .right {font-family: 'Garamound';
     color: blue;
     font-size: 14;
-    text-align: right
+    text-align: right;
+    line-height: 0.3;
   }
+  .close{
+    font-family: 'Garamound';
+    color: blue;
+    font-size: 14;
+    line-height: 0.3;}
 
 /*обычные ссылки*/ 
   a {

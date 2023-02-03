@@ -29,6 +29,7 @@ tot_prot=[]
 lst_rec=[]
 tot_cal_menu=[]
 tot_prot_menu=[]
+lst_meals=[]
 
 with app.app_context():
     # Создаем таблицы для рецептов и для пользователей в базе данных
@@ -76,22 +77,40 @@ def index():
 def add_products():
     rows_pr=Products.query.order_by(Products.product) # Filter by Alephbeth
     recipe_form = AddProduct(csrf_enabled=False)
-    if request.method == "POST" and recipe_form.validate_on_submit():
-        try:
-            title = recipe_form.title.data.capitalize()
-            calories = recipe_form.calories.data
-            proteins = recipe_form.proteins.data
-            author = current_user.username
-            new_product=Products(product=title, calories=calories, proteins=proteins, author= author)
+    if request.method == "POST":
+        # Block for API request:
+        if recipe_form.check():
+            query = recipe_form.title.data
+            api_url = 'https://api.api-ninjas.com/v1/nutrition?query={}'.format(query)
+
+            response = requests.get(api_url, headers={'X-Api-Key': '6tG3kaTKqFRQVmZQPWvQ0A==HIukQbANUV7z8dmr'})
+            if response.status_code == requests.codes.ok:
+                json = response.json()
+                clr = json[0]['calories']
+                prt = json[0]['protein_g']
+                txt = "Calories: {} Kcal, proteins: {} g ".format(clr, prt)
+                return render_template("add_product.html", form=recipe_form, rows = rows_pr, txt=txt)
+            else:
+                txt = 'Cannot give you recommended value, sorry'
+                return redirect(url_for("add_products", form=recipe_form, rows = rows_pr, txt=txt))
+            # End of block
+        elif recipe_form.submit() and recipe_form.validate_on_submit():
+            try:
+                title = recipe_form.title.data.capitalize()
+                calories = recipe_form.calories.data
+                proteins = recipe_form.proteins.data
+                author = current_user.username
+                new_product=Products(product=title, calories=calories, proteins=proteins, author= author)
         
-            db.session.add(new_product)
-            db.session.commit()
-            rows_pr=Products.query.all() # update the list of existing ingredients
-        except IntegrityError: 
-            pass
-        return redirect(url_for("add_products", form=recipe_form, rows = rows_pr)) # redirect to clear the form
+                db.session.add(new_product)
+                db.session.commit()
+                rows_pr=Products.query.all() # update the list of existing ingredients
+                txt=''
+            except IntegrityError: 
+                pass
+            return redirect(url_for("add_products", form=recipe_form, rows = rows_pr, txt='')) # redirect to clear the form
     else: 
-        return render_template("add_product.html", form=recipe_form, rows = rows_pr)
+        return render_template("add_product.html", form=recipe_form, rows = rows_pr, txt='')
 
 @app.route("/recipe/<int:id>")
 def recipe(id):
@@ -121,7 +140,6 @@ def add():
         prot = Products.query.filter(Products.product == ing).first().proteins / 100 * wei
         tot_prot.append(prot)
         lst_ing.append(ful) # Список потом выдается на страницу рецепта построчно
-        #print(tot_cal, tot_prot, sum(tot_cal))
         return render_template("form_add.html", template_form=form1, template_form2=form2, lst_ing=lst_ing)
     
     elif request.method == "POST" and form2.submit.data and form2.validate_on_submit():
@@ -188,7 +206,7 @@ def daily_menu():
 
     rows_rec = Recipy.query.all()
 
-    lst_rec=[ele.title for ele in rows_rec if ele.author == current_user.username] # Check it!!
+    lst_rec=[ele.title for ele in rows_rec if ele.author == current_user.username] # Для выпадающего меню рецептов
     lst_rec1=sorted(lst_rec)
     form.recipe.choices=lst_rec1
 
@@ -198,29 +216,30 @@ def daily_menu():
             cal= Recipy.query.filter(Recipy.title == rec).first().calories
             prot=Recipy.query.filter(Recipy.title == rec).first().proteins
             ful1= rec + '   ' + str(cal) + ' Kcal.'
-            lst_rec.append(ful1)
+            lst_meals.append(ful1)
             tot_cal_menu.append(cal)
             tot_prot_menu.append(prot)
-            return render_template("add_menu.html", meal=form, menu=lst_rec, calories=sum(tot_cal_menu), proteins=sum(tot_prot_menu))
+            return render_template("add_menu.html", meal=form, menu=lst_meals, calories=sum(tot_cal_menu), proteins=sum(tot_prot_menu))
         
         elif form.add_prod.data: # a snack from the list of ingredients is added
             prod=form.ingredient.data # I can add here Kcal or gr like in the previous block
             wei=form.weight.data
             cal=Products.query.filter(Products.product == prod).first().calories / 100 * wei
             prot = Products.query.filter(Products.product == prod).first().proteins / 100 * wei
-            lst_rec.append(prod)
+            lst_meals.append(prod)
             tot_cal_menu.append(cal)
             tot_prot_menu.append(prot)
-            return render_template("add_menu.html", meal=form, menu=lst_rec, calories=sum(tot_cal_menu), proteins=sum(tot_prot_menu))
+            return render_template("add_menu.html", meal=form, menu=lst_meals, calories=sum(tot_cal_menu), proteins=sum(tot_prot_menu))
 
         elif form.clean.data:
-            lst_rec.clear()
+            lst_meals.clear()
             tot_cal_menu.clear()
             tot_prot_menu.clear()
-            return render_template("add_menu.html", meal=form, menu=lst_rec, calories=tot_cal_menu, proteins=tot_prot_menu)
+            return render_template("add_menu.html", meal=form, menu=lst_meals, calories=tot_cal_menu, proteins=tot_prot_menu)
     
     elif request.method == "GET": # Изменить, чтобы не отображал пустой список!! []
-        return render_template("add_menu.html", meal=form, menu=lst_rec, calories=sum(tot_cal_menu), proteins=sum(tot_prot_menu))
+
+        return render_template("add_menu.html", meal=form, menu=lst_meals, calories=sum(tot_cal_menu), proteins=sum(tot_prot_menu))
 
 @app.route("/search", methods=['GET', 'POST'])
 def search():

@@ -40,14 +40,17 @@
             {{ form.hidden_tag() }}
     
             <p>{{ form.title.label }}
-            {{ form.title(size=30) }}</p>
+            {{ form.title(size=30) }}
+            {{form.check}}</p>
+
+            <p>Recommended values: {{txt}}</p>
     
             <p>{{ form.calories.label }}
             {{ form.calories(size=5) }}</p>
     
             <p>{{ form.proteins.label }}
             {{ form.proteins(size=5) }}</p>
-            {{txt}}
+            
             <p>{{ form.submit() }}</p>
           </form>
 

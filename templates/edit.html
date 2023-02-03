@@ -25,21 +25,27 @@
         <article id="mainArticle" style="border-radius: 25px;">
             <h2> Edit </h2>
             <form action="/edit/{{ id }}" method="POST">
+              <div class ="left_bl">
                 {{ template_form.hidden_tag() }}
         
                 <p>{{ template_form.title.label }}
                 {{ template_form.title(size=50) }}</p>
-        
-                <div style="overflow: auto; height:100px">
-                  {% for ele in ingredients %}
-                  <p> {{ele}} </p> <!-- list of the added ingredients -->
-                  {% endfor %}
-                  </div>
-        
-                <p>{{ template_form.instructions.label }}
-                {{ template_form.instructions(style='height: 100px;  width: 400px;') }}</p>
+                
+                
+                <div class="bordered">
+                {% for ele in ingredients %}
+                <h4> {{ele}} </h4> <!-- list of the added ingredients -->
+                {% endfor %}
+                </div>
+              </div>
+
+              <div class ="right_bl">
+                <p>{{ template_form.instructions.label }}</p>
+                
+                <p>{{ template_form.instructions(style='height: 100px;  width: 400px;') }}</p>
         
                 <p>{{ template_form.submit() }}</p>
+              </div>
               </form>
         </article>  
   {% endblock %}  

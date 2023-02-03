@@ -16,6 +16,7 @@ class AddProduct(FlaskForm):
   title =  StringField("Name of the product", validators=[DataRequired()])
   calories = IntegerField("Calories per 100 gr.", default=1)
   proteins = FloatField("Proteins per 100 gr.", default=1)
+  check = SubmitField("Check")
   submit = SubmitField("Confirm!")
 
 class AddMeal(FlaskForm):
