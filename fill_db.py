@@ -2,34 +2,32 @@
 и вообще для всяких экспериментов с кодом. В проекте не участвует.'''
 #import app
 from app import app, db, Recipy, Products
-'''
-from werkzeug.security import generate_password_hash, check_password_hash
-a='simanw73'
-print(generate_password_hash(a))
-'''
-'''
-with app.app_context():
-    try:
-        cal=float(Products.query.filter(Products.product == 'Apple').first().calories)
-    except TypeError:
-        cal=100
-    print(cal)
-'''
-lst=[]
-res=sum(lst)
-print(res)
-'''
-    #a.title='Неправильный салат с яйцом'
-    #db.session.commit()
-    #print(a)
-    #for ele in a:
-        #print(ele.title)
-    #for ele in a:
-    #    print(ele.instructions)
-    #for ele in Recipy.query.all():
-        #lst_names.append(ele.title)
-        #print(ele)
-'''
+
+class Recipy(db.Model):
+    id = db.Column(db.Integer, primary_key = True) #primary key column, automatically generated IDs
+    title = db.Column(db.String(100), index = True, unique = False) 
+    author = db.Column(db.String(40), index = True, unique = False) 
+    ingredients = db.Column(db.String(500), index = True, unique = False) # this could be removed
+    instructions = db.Column(db.String(4000), index = True, unique = False) 
+    calories = db.Column(db.Float(), index = True, unique = False)
+    proteins = db.Column(db.Float(), index = True, unique = False)
+    ingredients_out = db.relationship('Ingreds', backref='recipe', lazy='dynamic')
+
+class Ingreds(db.Model):
+    id = db.Column(db.Integer, primary_key = True) #primary key column, automatically generated IDs
+    name = db.Column(db.String(100), unique = False)
+    weight = db.Column(db.Integer, unique = False) 
+    recipy_id = db.Column(db.Integer, db.ForeignKey('recipe.id')) 
+
+# in add function:
+dic_ing_name={}
+# in if:
+
+dic_ing_name[ing] = wei
+
+# in elif:
+for ele in dic_ing_name:
+    new_in = Ingreds(name=ing, weight=dic_ing_name[ing], recipy_id= new_recipe.id)
 '''
 with app.app_context():
 

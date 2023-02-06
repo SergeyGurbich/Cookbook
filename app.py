@@ -10,7 +10,7 @@ import json
 from sqlalchemy.exc import IntegrityError
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from forms import AddRecipe, Search, RegistrationForm, LoginForm, AddProduct, AddToRecipe, AddMeal
+from forms import AddRecipe, Search, RegistrationForm, LoginForm, AddProduct, CheckProduct, AddToRecipe, AddMeal
 from flask_login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -76,41 +76,43 @@ def index():
 @app.route("/add_products", methods=["GET", "POST"])
 def add_products():
     rows_pr=Products.query.order_by(Products.product) # Filter by Alephbeth
-    recipe_form = AddProduct(csrf_enabled=False)
-    if request.method == "POST":
-        # Block for API request:
-        if recipe_form.check():
-            query = recipe_form.title.data
-            api_url = 'https://api.api-ninjas.com/v1/nutrition?query={}'.format(query)
+    check_form = CheckProduct(csrf_enabled=False)
+    recipe_form = AddProduct()
+    if request.method == "POST" and check_form.check.data:
+        # Block for API request: 
+        query = check_form.title.data
+        api_url = 'https://api.api-ninjas.com/v1/nutrition?query={}'.format(query)
 
-            response = requests.get(api_url, headers={'X-Api-Key': '6tG3kaTKqFRQVmZQPWvQ0A==HIukQbANUV7z8dmr'})
-            if response.status_code == requests.codes.ok:
-                json = response.json()
-                clr = json[0]['calories']
-                prt = json[0]['protein_g']
-                txt = "Calories: {} Kcal, proteins: {} g ".format(clr, prt)
-                return render_template("add_product.html", form=recipe_form, rows = rows_pr, txt=txt)
-            else:
-                txt = 'Cannot give you recommended value, sorry'
-                return redirect(url_for("add_products", form=recipe_form, rows = rows_pr, txt=txt))
-            # End of block
-        elif recipe_form.submit() and recipe_form.validate_on_submit():
-            try:
-                title = recipe_form.title.data.capitalize()
-                calories = recipe_form.calories.data
-                proteins = recipe_form.proteins.data
-                author = current_user.username
-                new_product=Products(product=title, calories=calories, proteins=proteins, author= author)
+        response = requests.get(api_url, headers={'X-Api-Key': '6tG3kaTKqFRQVmZQPWvQ0A==HIukQbANUV7z8dmr'})
+        if response.status_code == requests.codes.ok:
+            json = response.json()
+            clr = json[0]['calories']
+            prt = json[0]['protein_g']
+            txt = "Calories: {} Kcal, proteins: {} g ".format(clr, prt)
+            #return render_template("add_product.html", form=recipe_form, rows = rows_pr, txt=txt)
+        else:
+            txt = 'Cannot give you recommended value, sorry'
+        return render_template("add_product.html", form_check=check_form, form_add=recipe_form, rows = rows_pr, txt=txt)
+            # End of block. Now if after it user pushes Submit button
         
-                db.session.add(new_product)
-                db.session.commit()
-                rows_pr=Products.query.all() # update the list of existing ingredients
-                txt=''
-            except IntegrityError: 
-                pass
-            return redirect(url_for("add_products", form=recipe_form, rows = rows_pr, txt='')) # redirect to clear the form
-    else: 
-        return render_template("add_product.html", form=recipe_form, rows = rows_pr, txt='')
+    elif request.method == "POST" and recipe_form.submit.data:# and recipe_form.validate_on_submit():
+        try:
+            title = check_form.title.data.capitalize()
+            calories = recipe_form.calories.data
+            proteins = recipe_form.proteins.data
+            author = current_user.username
+            new_product=Products(product=title, calories=calories, proteins=proteins, author= author)
+        
+            db.session.add(new_product)
+            db.session.commit()
+            rows_pr=Products.query.all() # update the list of existing ingredients
+            txt='Product added'
+        except IntegrityError:
+            pass
+        return redirect(url_for("add_products", form_check=check_form, form_add=recipe_form, rows = rows_pr, txt='')) # redirect to clear the form
+
+    elif request.method == "GET":
+        return render_template("add_product.html", form_check=check_form, form_add=recipe_form, rows = rows_pr, txt='')
 
 @app.route("/recipe/<int:id>")
 def recipe(id):

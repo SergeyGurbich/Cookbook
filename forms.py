@@ -12,11 +12,14 @@ class AddRecipe(FlaskForm):
   instructions = TextAreaField("Instructions")
   submit = SubmitField("Confirm!")
 
-class AddProduct(FlaskForm):
+class CheckProduct(FlaskForm):
   title =  StringField("Name of the product", validators=[DataRequired()])
+  check = SubmitField("Check")
+
+class AddProduct(FlaskForm):
+  #title =  StringField("Name of the product", validators=[DataRequired()]) # if needed
   calories = FloatField("Calories per 100 gr.", default=1)
   proteins = FloatField("Proteins per 100 gr.", default=1)
-  check = SubmitField("Check")
   submit = SubmitField("Confirm!")
 
 class AddMeal(FlaskForm):

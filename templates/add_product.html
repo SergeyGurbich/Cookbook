@@ -37,21 +37,24 @@
       <div class=" right_bl "> 
         <h2> Add a products to your database </h2> 
           <form action="/add_products" method="POST"> 
-            {{ form.hidden_tag() }}
+            {{ form_check.hidden_tag() }}
     
-            <p>{{ form.title.label }}
-            {{ form.title(size=30) }}
-            {{form.check}}</p>
+            <p>{{ form_check.title.label }}
+            {{ form_check.title(size=30) }}</p>
+            <p title = "Get recommended values">{{form_check.check}}</p>
 
             <p>Recommended values: {{txt}}</p>
     
-            <p>{{ form.calories.label }}
-            {{ form.calories(size=5) }}</p>
+          <!-- </form>
+
+          <form action="/add_products" method="POST"> -->
+            <p>{{ form_add.calories.label }}
+            {{ form_add.calories(size=5) }}</p>
     
-            <p>{{ form.proteins.label }}
-            {{ form.proteins(size=5) }}</p>
+            <p>{{ form_add.proteins.label }}
+            {{ form_add.proteins(size=5) }}</p>
             
-            <p>{{ form.submit() }}</p>
+            <p>{{ form_add.submit() }}</p>
           </form>
 
       </div>
