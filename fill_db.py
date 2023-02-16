@@ -1,33 +1,20 @@
 '''Пробный файл с кодом для заполнения данных в созданной БД
 и вообще для всяких экспериментов с кодом. В проекте не участвует.'''
 #import app
-from app import app, db, Recipy, Products
+from app import app, db, Ingredients, Recipe
+'''Предположим, есть несколько строчек из БД. Превратим их в список со списками,
+чтобы затем передать в javascript на html странице'''
+with app.app_context():
+    id=1
+    ingredients = Recipe.query.get(id).ingredients.all()
+    print(len(ingredients))
 
-class Recipy(db.Model):
-    id = db.Column(db.Integer, primary_key = True) #primary key column, automatically generated IDs
-    title = db.Column(db.String(100), index = True, unique = False) 
-    author = db.Column(db.String(40), index = True, unique = False) 
-    ingredients = db.Column(db.String(500), index = True, unique = False) # this could be removed
-    instructions = db.Column(db.String(4000), index = True, unique = False) 
-    calories = db.Column(db.Float(), index = True, unique = False)
-    proteins = db.Column(db.Float(), index = True, unique = False)
-    ingredients_out = db.relationship('Ingreds', backref='recipe', lazy='dynamic')
-
-class Ingreds(db.Model):
-    id = db.Column(db.Integer, primary_key = True) #primary key column, automatically generated IDs
-    name = db.Column(db.String(100), unique = False)
-    weight = db.Column(db.Integer, unique = False) 
-    recipy_id = db.Column(db.Integer, db.ForeignKey('recipe.id')) 
-
-# in add function:
-dic_ing_name={}
-# in if:
-
-dic_ing_name[ing] = wei
-
-# in elif:
-for ele in dic_ing_name:
-    new_in = Ingreds(name=ing, weight=dic_ing_name[ing], recipy_id= new_recipe.id)
+    a=[[ingredients[i].ingredient, ingredients[i].weight, ingredients[i].calories, ingredients[i].proteins] for i in range(len(ingredients))]
+    #print(a)
+    sum=0
+    for j in range(len(a)):
+        sum += a[j][2]
+    print(sum)
 '''
 with app.app_context():
 

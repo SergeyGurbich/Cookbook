@@ -1,12 +1,10 @@
-'''Код приложения для записи и хранения кулинарных рецептов - версия 2
-Будет добавлена возможность формировать рецепт из списка базовых продуктов, 
-возможность составлять такой список продуктов,
-и указывать калорийность продуктов'''
+'''Код приложения для записи и хранения кулинарных рецептов - версия 2_1
+Будет добавлена отдельная база для ингредиентов рецепта с указанием веса и калорийности
+Будет использован Джаваскрипт для редактирования списка ингредиентов рецепта'''
 
 import datetime
 import requests
 import json
-#import sqlalchemy
 from sqlalchemy.exc import IntegrityError
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -17,13 +15,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "green"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///myDB.db'
-#app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///' + os.path.join(os.getcwd(), 'myDB.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 
 lst_ing=[]
+tot_wei=[]
 tot_cal=[]
 tot_prot=[]
 lst_rec=[]
@@ -32,17 +30,15 @@ tot_prot_menu=[]
 lst_meals=[]
 
 with app.app_context():
-    # Создаем таблицы для рецептов и для пользователей в базе данных
+    # Создаем таблицы для рецептов, исходных продуктов и для пользователей в базе данных
     db = SQLAlchemy(app)
 
-    class Recipy(db.Model):
-        id = db.Column(db.Integer, primary_key = True) #primary key column, automatically generated IDs
+    class Recipe(db.Model):
+        id = db.Column(db.Integer, primary_key = True) 
         title = db.Column(db.String(100), index = True, unique = False) 
         author = db.Column(db.String(40), index = True, unique = False) 
-        ingredients = db.Column(db.String(500), index = True, unique = False) 
         instructions = db.Column(db.String(4000), index = True, unique = False) 
-        calories = db.Column(db.Float(), index = True, unique = False)
-        proteins = db.Column(db.Float(), index = True, unique = False)
+        ingredients = db.relationship('Ingredients', backref='recipe', lazy='dynamic')
 
     class Products(db.Model):
         id = db.Column(db.Integer, primary_key = True)
@@ -50,6 +46,14 @@ with app.app_context():
         calories=db.Column(db.Integer(), index = True, unique = False)
         proteins=db.Column(db.Float(), index = True, unique = False)
         author = db.Column(db.String(), index = True, unique = False)
+
+    class Ingredients(db.Model):
+        id = db.Column(db.Integer, primary_key = True)
+        ingredient=db.Column(db.String(100), index = True, unique = False)
+        weight = db.Column(db.Float(), index = True, unique = False)
+        calories = db.Column(db.Float(), index = True, unique = False)
+        proteins = db.Column(db.Float(), index = True, unique = False)
+        recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'))
 
     class User(UserMixin, db.Model):
         id = db.Column(db.Integer, primary_key=True)
@@ -89,10 +93,11 @@ def add_products():
             clr = json[0]['calories']
             prt = json[0]['protein_g']
             txt = "Calories: {} Kcal, proteins: {} g ".format(clr, prt)
-            #return render_template("add_product.html", form=recipe_form, rows = rows_pr, txt=txt)
+            #return redirect(url_for("add_products", form_check=check_form, form_add=recipe_form, rows = rows_pr, txt=txt))
         else:
             txt = 'Cannot give you recommended value, sorry'
         return render_template("add_product.html", form_check=check_form, form_add=recipe_form, rows = rows_pr, txt=txt)
+
             # End of block. Now if after it user pushes Submit button
         
     elif request.method == "POST" and recipe_form.submit.data:# and recipe_form.validate_on_submit():
@@ -115,13 +120,19 @@ def add_products():
         return render_template("add_product.html", form_check=check_form, form_add=recipe_form, rows = rows_pr, txt='')
 
 @app.route("/recipe/<int:id>")
-def recipe(id):
-  return render_template("recipe.html", recipe_name=Recipy.query.get(id).title,
-   ingredients = Recipy.query.get(id).ingredients.split('\n'),
-   instructions = Recipy.query.get(id).instructions.split('\n'),
-   calories = Recipy.query.get(id).calories,
-   proteins = Recipy.query.get(id).proteins,
-   id=Recipy.query.get(id).id)
+def recipe(id): # Здесь ingredients - это совокупность строк из таблицы ингредиентов
+    ingredients = Recipe.query.get(id).ingredients.all()
+    sum_c=0
+    sum_p=0
+    for i in range(len(ingredients)):
+        sum_c += ingredients[i].calories
+        sum_p += ingredients[i].proteins
+    sum_cal=round(sum_c,2) 
+    sum_prot=round(sum_p,2)
+    return render_template("recipe.html", recipe_name=Recipe.query.get(id).title,
+                           ingredients = Recipe.query.get(id).ingredients.all(),
+                           instructions = Recipe.query.get(id).instructions.split('\n'),
+                           id=Recipe.query.get(id).id, sum_cal = sum_cal, sum_prot=sum_prot)
 
 # Adds a new recipe
 @app.route("/add", methods=["GET", "POST"])
@@ -138,6 +149,7 @@ def add():
         wei=form1.weight.data
         ful= ing + '   ' + str(wei) + ' gr.'
         cal=Products.query.filter(Products.product == ing).first().calories / 100 * wei
+        tot_wei.append(wei)
         tot_cal.append(cal) # total calories in the recipe
         prot = Products.query.filter(Products.product == ing).first().proteins / 100 * wei
         tot_prot.append(prot)
@@ -145,59 +157,92 @@ def add():
         return render_template("form_add.html", template_form=form1, template_form2=form2, lst_ing=lst_ing)
     
     elif request.method == "POST" and form2.submit.data and form2.validate_on_submit():
-        title = form2.title.data
-        ingredients = '\n'.join(lst_ing) # Перечень ингредиентов одним элементом добавится в базу
-        instructions = form2.instructions.data
-        calories = round(sum(tot_cal) ,1) # округляем результат до 1 знака после запятой
-        proteins = round(sum(tot_prot), 1)
-        author = current_user.username
-        new_recipe=Recipy(title=title, ingredients=ingredients, instructions=instructions, author= author, calories =calories, proteins =proteins)
         
+        # Добавляем рецепт в таблицу рецептов
+
+        title = form2.title.data
+        instructions = form2.instructions.data
+        author = current_user.username
+        new_recipe=Recipe(title=title, instructions=instructions, author= author)
         db.session.add(new_recipe)
+
+        # добавляем ингредиенты в таблицу ингредиентов
+        for i in range(len(lst_ing)):
+            new_ingredient = Ingredients(ingredient=lst_ing[i], weight=tot_wei[i], calories=tot_cal[i],
+            proteins=tot_prot[i], recipe= new_recipe)
+            db.session.add(new_ingredient)
+
         db.session.commit()
+
         lst_ing.clear()
         tot_cal.clear()
         tot_prot.clear()
+        tot_wei.clear()   
 
         return redirect(url_for("index"))
+    
+    elif request.method == "POST" and form2.cancel.data:
+        lst_ing.clear()
+        tot_cal.clear()
+        tot_prot.clear()
+        tot_wei.clear()   
+
+        return redirect(url_for("index"))
+    
     else: 
         return render_template("form_add.html", template_form=form1, template_form2=form2, lst_ing=lst_ing)
 
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
+    recipe_form = AddRecipe(csrf_enabled=False)
+    ingredient_form = AddToRecipe()
+    rows_pr=Products.query.all()
+    lst_unsorted=[ele.product for ele in rows_pr]
+    lst=sorted(lst_unsorted)
+    ingredient_form.ingredient.choices=lst
+
     if request.method == "POST":
-        recipe_form = AddRecipe(csrf_enabled=False)
         
+        if ingredient_form.add.data:
+            ing = ingredient_form.ingredient.data
+            wei = ingredient_form.weight.data
+            ful= ing + '   ' + str(wei) + ' gr.'
+            cal=Products.query.filter(Products.product == ing).first().calories / 100 * wei
+            prot = Products.query.filter(Products.product == ing).first().proteins / 100 * wei
+            new_ing = Ingredients(ingredient = ful, weight = wei, calories = cal, proteins = prot, recipe_id = id)
+            
+            db.session.add(new_ing)
+            db.session.commit()
+            return redirect(url_for("edit", id=id))
+
         if recipe_form.validate_on_submit():
-            edited = Recipy.query.get(id)
+            edited = Recipe.query.get(id)
             edited.title = recipe_form.title.data
             #edited.ingredients = recipe_form.ingredients.data
             edited.instructions = recipe_form.instructions.data
             db.session.commit() 
-        #return redirect("/recipe/<id>") # Это почему-то не работает - не находит страницу
-        return redirect(url_for("index"))
+        return redirect(url_for("recipe", id=id)) 
 
     else:
-        recipe_form = AddRecipe(csrf_enabled=False)
-        recipe_form.title.data=Recipy.query.get(id).title
-        ingredients =Recipy.query.get(id).ingredients
-        ingredients_list= ingredients.split('\n')
-        #recipe_form.ingredients.data=Recipy.query.get(id).ingredients
-        recipe_form.instructions.data=Recipy.query.get(id).instructions
+        recipe_form.title.data=Recipe.query.get(id).title
+        ingredients =Recipe.query.get(id).ingredients.all()
+        recipe_form.instructions.data=Recipe.query.get(id).instructions
         
-        return render_template("edit.html", id=id, template_form=recipe_form,
+        return render_template("edit.html", id=id, template_form = recipe_form,
+        add_ingr = ingredient_form,
         title = recipe_form.title.data, 
-        ingredients = ingredients_list, 
+        ingredients = ingredients,
         instructions = recipe_form.instructions.data)
 
 @app.route("/delete/<id>")
 def delete(id):
-    deleted = Recipy.query.get(id)
+    deleted = Recipe.query.get(id)
     db.session.delete(deleted)
     db.session.commit() 
     return redirect(url_for("index"))
 
 @app.route("/daily_menu", methods=['GET', 'POST'])
+
 def daily_menu():
     form = AddMeal()
 
@@ -206,7 +251,7 @@ def daily_menu():
     lst_prod1=sorted(lst_prod)
     form.ingredient.choices=lst_prod1
 
-    rows_rec = Recipy.query.all()
+    rows_rec = Recipe.query.all()
 
     lst_rec=[ele.title for ele in rows_rec if ele.author == current_user.username] # Для выпадающего меню рецептов
     lst_rec1=sorted(lst_rec)
@@ -215,13 +260,19 @@ def daily_menu():
     if request.method == "POST":
         if form.add_rec.data: # a meal from the list of recipes is added
             rec=form.recipe.data
-            cal= Recipy.query.filter(Recipy.title == rec).first().calories
-            prot=Recipy.query.filter(Recipy.title == rec).first().proteins
-            ful1= rec + '   ' + str(cal) + ' Kcal.'
+            
+            ing=Recipe.query.filter(Recipe.title == rec).first().ingredients.all()
+            cal=0
+            prot=0
+            for ele in ing:
+                cal += ele.calories
+                prot += ele.proteins
+
+            ful1= rec #+ '   ' + str(round(cal,2)) + ' Kcal.'
             lst_meals.append(ful1)
             tot_cal_menu.append(cal)
             tot_prot_menu.append(prot)
-            return render_template("add_menu.html", meal=form, menu=lst_meals, calories=sum(tot_cal_menu), proteins=sum(tot_prot_menu))
+            return render_template("add_menu.html", meal=form, menu=lst_meals, calories=round(sum(tot_cal_menu),2), proteins=round(sum(tot_prot_menu),2))
         
         elif form.add_prod.data: # a snack from the list of ingredients is added
             prod=form.ingredient.data # I can add here Kcal or gr like in the previous block
@@ -231,7 +282,7 @@ def daily_menu():
             lst_meals.append(prod)
             tot_cal_menu.append(cal)
             tot_prot_menu.append(prot)
-            return render_template("add_menu.html", meal=form, menu=lst_meals, calories=sum(tot_cal_menu), proteins=sum(tot_prot_menu))
+            return render_template("add_menu.html", meal=form, menu=lst_meals, calories=round(sum(tot_cal_menu),2), proteins=round(sum(tot_prot_menu),2))
 
         elif form.clean.data:
             lst_meals.clear()
@@ -247,7 +298,7 @@ def daily_menu():
 def search():
     search_form = Search(csrf_enabled=False)
     word = request.form['word']
-    rows=Recipy.query.filter(Recipy.title.like('%'+word+'%')).all()
+    rows=Recipe.query.filter(Recipe.title.like('%'+word+'%')).all()
     user= current_user.username
     return render_template("search.html", rows=rows, search_form=search_form, username = user)
 
@@ -299,7 +350,7 @@ def login():
 @app.route('/user/<username>')
 @login_required
 def user(username):
-    rows=Recipy.query.order_by(Recipy.title)
+    rows=Recipe.query.order_by(Recipe.title)
     search_form = Search(csrf_enabled=False)
     user = User.query.filter_by(username=username).first_or_404()
     return render_template('user.html', user=user, username=username, rows=rows, search_form=search_form)

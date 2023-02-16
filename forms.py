@@ -11,6 +11,7 @@ class AddRecipe(FlaskForm):
   title =  StringField("Title", validators=[DataRequired()])
   instructions = TextAreaField("Instructions")
   submit = SubmitField("Confirm!")
+  cancel = SubmitField("Cancel")
 
 class CheckProduct(FlaskForm):
   title =  StringField("Name of the product", validators=[DataRequired()])

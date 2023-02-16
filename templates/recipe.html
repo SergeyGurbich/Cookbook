@@ -32,11 +32,12 @@
         <h3>Ingredients</h3>
         <ul>
             {% for ele in ingredients %}
-            <li>{{ ele }}</li>
+            <li>{{ ele.ingredient }}</li>
             {% endfor %}
         </ul>
-        <p class="right"> Total calories: {{calories}} Kcal</p>
-        <p class="right"> Total proteins: {{proteins}} gr.</p>
+        
+        <p class="right">Total calories: {{sum_cal}} Kcal</p>
+        <p class="right">Total proteins: {{sum_prot}} gr.</p>
       </div> 
       
       <div class=" right_bl ">
@@ -48,10 +49,10 @@
         </ol>
         <p></p>
         <p><a class='one' href="/edit/{{ id }}">Edit</a>
-        <a class='one' href="/delete/{{ id }}">Delete</a></p>
+        <a class='one' href="/delete/{{ id }}" onclick="return confirm('Are you sure you want to delete this recipe?')";>Delete</a></p>
       </div>
     </article>  
   {% endblock %}
-  <!--
+  <!-- !!!!!!
   </body>
 </html>-->

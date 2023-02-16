@@ -54,9 +54,20 @@
             <p>{{ form_add.proteins.label }}
             {{ form_add.proteins(size=5) }}</p>
             
-            <p>{{ form_add.submit() }}</p>
+            <p onclick="message()">{{ form_add.submit() }}</p> 
           </form>
 
+          <script>
+            function message() {
+                alert('Thank you!\n You have successfully added the product to the ingredient list');
+            }
+          </script>
+
+          <script>
+            function msg() {
+              document.getElementById("msg").innerHTML = 'Thank you!\n You have successfully added the product to the ingredient list'
+            }
+          </script>
       </div>
     </article> 
     {% endblock %}

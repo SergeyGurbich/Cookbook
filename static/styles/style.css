@@ -103,6 +103,13 @@ h5 {letter-spacing: 1px;
   color: #5624cc;
 }
 
+h6 {font-family: 'Lucida calligraphy', 'Garamound';
+  font-weight: bold;
+  color: rgb(157, 0, 255);
+  font-size: 16px;
+  line-height: 0.1;
+}
+
 p {font-family: 'Garamound';
   color: blue;
   font-size: 14;}
