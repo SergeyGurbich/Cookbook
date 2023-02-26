@@ -188,7 +188,7 @@ p {font-family: 'Garamound';
       "nav"
       "article"
       "footer";
-    grid-template-rows: 80px 80px 1fr 70px;  
+    grid-template-rows: 80px 1fr 1fr 70px;  
     grid-template-columns: 1fr;
  }
 }
