@@ -180,3 +180,15 @@ p {font-family: 'Garamound';
   background-image: none;
   background-color: rgba(0,0,0,0);
 }  
+/* Stack the layout on small devices/viewports. */
+@media (max-width: 721px) {
+  body { 
+    grid-template-areas: 
+      "header"
+      "nav"
+      "article"
+      "footer";
+    grid-template-rows: 80px 80px 1fr 70px;  
+    grid-template-columns: 1fr;
+ }
+}
