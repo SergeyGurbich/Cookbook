@@ -199,15 +199,15 @@ p {font-family: 'Garamound';
       "footer";
     grid-template-rows: 80px 1fr 1fr 70px;  
     grid-template-columns: 1fr;
- }
-}
+  }
    
-.navbar-menu {
+  .navbar-menu {
   list-style-type: none;
-  padding: 10px;
-}
+  padding: 5px;
+  }
 
-.navbar-menu li {
-padding: 10px;
-display: inline-block;
+  .navbar-menu li {
+  padding: 5px;
+  display: inline-block;
+  }
 }
