@@ -35,14 +35,14 @@ nav {
     padding-left: 20px;
     background: rgb(244, 218, 242);
     background-image: url('wallpaper.jpg'); 
-    position: -webkit-sticky;
-    position: sticky;
+    /*position: -webkit-sticky;*/
+    /*position: sticky;*/
     top: 0;
     }
     
-    .navbar-menu {
-      list-style-type: none;
-      padding: 20px;
+  .navbar-menu {
+    list-style-type: none;
+    padding: 20px;
   }
 
   .navbar-menu li {
@@ -54,7 +54,7 @@ nav {
     background: rgb(244, 218, 242);
     background-image: url('wallpaper.jpg'); 
     width: 100%;
-    }  
+    } 
 
   .bordered {
     overflow: auto; 
@@ -190,7 +190,7 @@ p {font-family: 'Garamound';
   background-color: rgba(0,0,0,0);
 }  
 /* Stack the layout on small devices/viewports. */
-@media (max-width: 721px) {
+@media (max-width: 767px) {
   body { 
     grid-template-areas: 
       "header"
@@ -203,11 +203,26 @@ p {font-family: 'Garamound';
    
   .navbar-menu {
   list-style-type: none;
-  padding: 5px;
+  padding: 10px;
   }
 
   .navbar-menu li {
-  padding: 5px;
+  padding: 10px;
   display: inline-block;
+  }
+
+  .right_bl {
+    display:block;
+    width: 95%;
+  }
+
+  .left_bl {
+    display:block;
+    width: 95%;
+  }
+
+  .bordered {
+    padding: 3px;
+    width: 90%;
   }
 }
