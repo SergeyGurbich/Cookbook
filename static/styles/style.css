@@ -39,6 +39,15 @@ nav {
     position: sticky;
     top: 0;
     }
+    
+    .navbar-menu {
+      list-style-type: none;
+      padding: 20px;
+  }
+
+  .navbar-menu li {
+    padding: 30px;
+}
 
   div {
     padding: 1.2em;
@@ -191,4 +200,14 @@ p {font-family: 'Garamound';
     grid-template-rows: 80px 1fr 1fr 70px;  
     grid-template-columns: 1fr;
  }
+}
+   
+.navbar-menu {
+  list-style-type: none;
+  padding: 10px;
+}
+
+.navbar-menu li {
+padding: 10px;
+display: inline-block;
 }
