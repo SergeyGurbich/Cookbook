@@ -13,14 +13,12 @@
     </header>
 
     <nav id="mainNav">
-      <p> <h2>Options</h2> </p>
-       
-      <p><a class='one' href="/add_products">Ingredients</a></p>
-      <p><a class='one' href="/">Recipes</a></p>
-      <p><a class='one' href="/add">Add a recipe</a></p>
-      <p><a class='one' href="/daily_menu">Meals</a></p>
-      <p><a class='one' href="{{ url_for('logout') }}">Log out</a></p>
-
+        <ul class="navbar-menu">
+          <li><a class='one' href="/add_products">Ingredients</a></li>
+          <li><a class='one' href="/">Recipes</a></li>
+         <li><a class='one' href="/daily_menu">Meals</a></li>
+          <li><a class='one' href="{{ url_for('logout') }}">Log out</a></li>
+        </ul>
     </nav>
 
     <footer id="pageFooter" style="border-radius: 25px;">
